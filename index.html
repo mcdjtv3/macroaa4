@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - The IS-LM Model and Macroeconomic Equilibrium</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "The IS curve represents equilibrium in which market?", choices: ["Labor market", "Financial market", "Goods market", "Bond market"], correct: 2 },
+        { question: "Which of the following would cause the IS curve to shift to the right?", choices: ["An increase in taxes", "A decrease in consumer confidence", "An increase in government spending", "An increase in the interest rate"], correct: 2 },
+        { question: "How does an increase in the interest rate affect investment and output in the IS-LM model?", choices: ["It increases both investment and output", "It decreases both investment and output", "It increases investment but decreases output", "It decreases investment but increases output"], correct: 1 },
+        { question: "In the LM relation, what happens when real income increases?", choices: ["The interest rate decreases", "The money supply increases", "The interest rate increases", "The demand for money decreases"], correct: 2 },
+        { question: "Which version of the LM relation assumes that the central bank sets the interest rate and adjusts the money supply accordingly?", choices: ["The old version based on the quantity theory of money", "The new version where the central bank controls the interest rate", "The version where the central bank controls taxes", "The version that assumes constant inflation"], correct: 1 },
+        { question: "What does the point of intersection between the IS and LM curves represent?", choices: ["Equilibrium in both the goods and financial markets", "A situation where the budget deficit is zero", "The natural rate of unemployment", "A state of hyperinflation"], correct: 0 },
+        { question: "If the central bank decides to implement monetary contraction, what action is it likely to take?", choices: ["Decrease the interest rate", "Increase the money supply", "Decrease the money supply", "Increase government spending"], correct: 2 },
+        { question: "What effect does fiscal expansion have on the IS curve?", choices: ["It shifts the IS curve to the left", "It shifts the IS curve to the right", "It makes the IS curve steeper", "It has no effect on the IS curve"], correct: 1 },
+        { question: "Which of the following policies is considered monetary expansion?", choices: ["An increase in taxes", "A reduction in government spending", "A decrease in the interest rate", "An increase in the budget deficit"], correct: 2 },
+        { question: "In the IS-LM framework, what happens to the equilibrium output if the central bank raises the interest rate?", choices: ["Output increases", "Output decreases", "Output remains the same", "Output becomes volatile"], correct: 1 },
+        { question: "What would most likely shift the LM curve upward?", choices: ["A reduction in taxes", "A decrease in the money supply", "An increase in government spending", "A decrease in the interest rate"], correct: 1 },
+        { question: "If nominal income increases while the money supply remains constant, what happens to the LM curve?", choices: ["It shifts upward", "It shifts downward", "It stays the same", "It becomes flatter"], correct: 0 },
+        { question: "Which of the following statements is true about fiscal policy in the IS-LM model?", choices: ["Fiscal policy has more effect on investment than consumption", "Fiscal policy shifts the LM curve", "Fiscal policy can lead to an increase in output without affecting the interest rate", "Fiscal policy has more effect on consumption than monetary policy"], correct: 3 },
+        { question: "What is the primary advantage of using a mix of fiscal and monetary policies to combat a recession?", choices: ["It prevents inflation", "It minimizes government intervention", "It balances the effects on consumption and investment", "It ensures that the budget deficit is eliminated"], correct: 2 },
+        { question: "What is the effect of an increase in consumer confidence on the IS-LM model?", choices: ["It shifts the IS curve to the left", "It shifts the IS curve to the right", "It shifts the LM curve upward", "It shifts the LM curve downward"], correct: 1 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+</html>
